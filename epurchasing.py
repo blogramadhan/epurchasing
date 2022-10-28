@@ -1,5 +1,7 @@
 import streamlit as st
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 from babel.numbers import format_currency
 
 def ekatalog(pilih):
@@ -90,14 +92,32 @@ def ekatalog(pilih):
     dkn2.metric("Jumlah Transaksi E-Katalog Nasional", jumlah_trx_nasional[0])
     dkn3.metric("Nilai Transaksi E-Ketalog Nasional", nilai_trx_nasional_print)
 
-    ## Mulai Tampilkan Data Etalase E-Katalog
-    # df_daring.groupby(["nama_satker","kategori"])['valuasi'].count()
-    #st.title("DATA ETALASE")
-    #etalase = df_prod_loc.groupby(["nama_komoditas"])["nama_penyedia"].count()
-    #etalase = df_prod_loc["nama_komoditas"].value_counts()
-    #etalase.columns = ['Nama Komoditas', 'Jumlah Produk']
-    #st.dataframe(etalase)
+    # Buat grafik Data E-Katalog
+    opdtrxcount = df_kat_loc_lokal.nama_satker.value_counts().sort_values(ascending=False)
+    opdtrxsum = df_kat_loc_lokal.groupby(by='nama_satker').sum().sort_values(by='total_harga', ascending=False)['total_harga']    
+ 
+    # Jumlah Transaksi Katalog Lokal OPD 
+    st.markdown('### Jumlah Transaksi OPD')
+    tc1, tc2 = st.columns((3,7))
+    with tc1:
+        st.dataframe(opdtrxcount)
+    with tc2:
+        figtc = plt.figure(figsize=(10,6))
+        sns.barplot(x = opdtrxcount, y = opdtrxcount.index)
+        st.pyplot(figtc)
 
+    # Nilai Transaksi Katalog Lokal OPD 
+    st.markdown('### Nilai Transaksi OPD')
+    ts1, ts2 = st.columns((3.3,6.7))
+    with ts1:
+        st.dataframe(opdtrxsum)
+    with ts2:
+        figts = plt.figure(figsize=(10,6))
+        sns.barplot(x = opdtrxsum, y = opdtrxsum.index)
+        st.pyplot(figts)
+ 
+    ## Data Transaksi Toko Daring
+    #st.title("DATA TRANSAKSI TOKO DARING - " + pilih)
 
 
 #def tokodaring(pilih):
