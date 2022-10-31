@@ -62,17 +62,17 @@ def ekatalog(pilih):
     ## Mulai Tampilkan Data E-KATALOG
     st.title("TRANSAKSI E-KATALOG - " + pilih)
     jumlah_produk = df_prod_loc['nama_produk'].count()
-    jumlah_penyedia = df_prod_loc['nama_penyedia'].unique().shape
+    jumlah_penyedia = df_prod_loc['nama_penyedia'].value_counts().shape
 
-    jumlah_trx_lokal = df_kat_loc_lokal['no_paket'].unique().shape
+    jumlah_trx_lokal = df_kat_loc_lokal['no_paket'].value_counts().shape
     nilai_trx_lokal = df_kat_loc_lokal['total_harga'].sum()
-    nilai_trx__lokal_print = format_currency(nilai_trx_lokal, 'Rp. ', locale='id_ID')
+    nilai_trx_lokal_print = format_currency(nilai_trx_lokal, 'Rp. ', locale='id_ID')
 
-    jumlah_trx_sektoral = df_kat_loc_sektoral['no_paket'].unique().shape
+    jumlah_trx_sektoral = df_kat_loc_sektoral['no_paket'].value_counts().shape
     nilai_trx_sektoral = df_kat_loc_sektoral['total_harga'].sum()
     nilai_trx_sektoral_print = format_currency(nilai_trx_sektoral, 'Rp. ', locale='id_ID')
 
-    jumlah_trx_nasional = df_kat_loc_nasional['no_paket'].unique().shape
+    jumlah_trx_nasional = df_kat_loc_nasional['no_paket'].value_counts().shape
     nilai_trx_nasional = df_kat_loc_nasional['total_harga'].sum()
     nilai_trx_nasional_print = format_currency(nilai_trx_nasional, 'Rp. ', locale='id_ID')
 
@@ -80,7 +80,7 @@ def ekatalog(pilih):
     dkl1.metric("Jumlah Produk Katalog Lokal", jumlah_produk)
     dkl2.metric("Jumlah Penyedia Katalog Lokal", jumlah_penyedia[0])
     dkl3.metric("Jumlah Transaksi Katalog Lokal", jumlah_trx_lokal[0])
-    dkl4.metric("Nilai Transaksi Katalog Lokal", nilai_trx__lokal_print)
+    dkl4.metric("Nilai Transaksi Katalog Lokal", nilai_trx_lokal_print)
 
     dks1, dks2, dks3 = st.columns(3)
     dks1.metric("Jumlah Produk E-Katalog Sektoral", "Tidak Ada Data")
@@ -92,8 +92,15 @@ def ekatalog(pilih):
     dkn2.metric("Jumlah Transaksi E-Katalog Nasional", jumlah_trx_nasional[0])
     dkn3.metric("Nilai Transaksi E-Ketalog Nasional", nilai_trx_nasional_print)
 
-    # Buat grafik Data E-Katalog
-    opdtrxcount = df_kat_loc_lokal.nama_satker.value_counts().sort_values(ascending=False)
+    # Buat grafik Data E-Katalog   
+    #opdtrxcount = df_kat_loc_lokal.nama_satker.value_counts().sort_values(ascending=False)
+    tmp_kat_loc_lokal = df_kat_loc_lokal[['nama_satker', 'no_paket']]
+    pv_kat_loc_lokal = tmp_kat_loc_lokal.pivot_table(
+        index = ['nama_satker', 'no_paket'],
+        #values = ['no_paket']
+    )
+    tmp_kat_loc_lokal_ok = pv_kat_loc_lokal.reset_index()
+    opdtrxcount = tmp_kat_loc_lokal_ok['nama_satker'].value_counts()
     opdtrxsum = df_kat_loc_lokal.groupby(by='nama_satker').sum().sort_values(by='total_harga', ascending=False)['total_harga']    
  
     # Jumlah Transaksi Katalog Lokal OPD 
@@ -121,3 +128,13 @@ def ekatalog(pilih):
 
 
 #def tokodaring(pilih):
+
+# Rumus sementara
+#tmp_df = KatalogDetail[['no_paket', 'nama_satker']]
+#pivot_table = tmp_df.pivot_table(
+#    index=['nama_satker', 'no_paket'],
+#    values=['no_paket'],
+#    aggfunc={'no_paket': [pd.Series.nunique]}
+#)
+#pivot_table.set_axis([flatten_column_header(col) for col in pivot_table.keys()], axis=1, inplace=True)
+#KatalogDetail_pivot = pivot_table.reset_index()
