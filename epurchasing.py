@@ -128,13 +128,3 @@ def ekatalog(pilih):
 
 
 #def tokodaring(pilih):
-
-# Rumus sementara
-#tmp_df = KatalogDetail[['no_paket', 'nama_satker']]
-#pivot_table = tmp_df.pivot_table(
-#    index=['nama_satker', 'no_paket'],
-#    values=['no_paket'],
-#    aggfunc={'no_paket': [pd.Series.nunique]}
-#)
-#pivot_table.set_axis([flatten_column_header(col) for col in pivot_table.keys()], axis=1, inplace=True)
-#KatalogDetail_pivot = pivot_table.reset_index()
