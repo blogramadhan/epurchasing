@@ -6,6 +6,13 @@ from babel.numbers import format_currency
 
 def ekatalog(pilih):
 
+    # Fungsi-fungsi buatan
+    def convert_trxkatalog(dftrx):
+        return dftrx.to_csv().encode('utf-8')
+
+    def convert_prodkatalog(dfprod):
+        return dfprod.to_csv().encode('utf-8')
+
     # Setting CSS
     with open('style.css') as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
@@ -102,27 +109,47 @@ def ekatalog(pilih):
     tmp_kat_loc_lokal_ok = pv_kat_loc_lokal.reset_index()
     opdtrxcount = tmp_kat_loc_lokal_ok['nama_satker'].value_counts()
     opdtrxsum = df_kat_loc_lokal.groupby(by='nama_satker').sum().sort_values(by='total_harga', ascending=False)['total_harga']    
- 
-    # Jumlah Transaksi Katalog Lokal OPD 
-    st.markdown('### Jumlah Transaksi OPD')
-    tc1, tc2 = st.columns((3,7))
-    with tc1:
-        st.dataframe(opdtrxcount)
-    with tc2:
-        figtc = plt.figure(figsize=(10,6))
-        sns.barplot(x = opdtrxcount, y = opdtrxcount.index)
-        st.pyplot(figtc)
 
-    # Nilai Transaksi Katalog Lokal OPD 
-    st.markdown('### Nilai Transaksi OPD')
-    ts1, ts2 = st.columns((3.3,6.7))
-    with ts1:
-        st.dataframe(opdtrxsum)
-    with ts2:
-        figts = plt.figure(figsize=(10,6))
-        sns.barplot(x = opdtrxsum, y = opdtrxsum.index)
-        st.pyplot(figts)
+    # Tampilkan Grafik jika ada Data
+    if jumlah_trx_lokal[0] > 0: 
+        # Jumlah Transaksi Katalog Lokal OPD
+        st.markdown('### Jumlah Transaksi OPD')
+        tc1, tc2 = st.columns((3,7))
+        with tc1:
+            st.dataframe(opdtrxcount)
+        with tc2:
+            figtc = plt.figure(figsize=(10,6))
+            sns.barplot(x = opdtrxcount, y = opdtrxcount.index)
+            st.pyplot(figtc)
+
+        # Nilai Transaksi Katalog Lokal OPD 
+        st.markdown('### Nilai Transaksi OPD')
+        ts1, ts2 = st.columns((3.3,6.7))
+        with ts1:
+            st.dataframe(opdtrxsum)
+        with ts2:
+            figts = plt.figure(figsize=(10,6))
+            sns.barplot(x = opdtrxsum, y = opdtrxsum.index)
+            st.pyplot(figts)
  
+    # Download Data Button
+    df1_download = convert_trxkatalog(df_kat_loc)
+    df2_download = convert_prodkatalog(df_prod_loc)
+
+    st.download_button(
+        label = '📥 Download Data Transaksi E-KATALOG',
+        data = df1_download,
+        file_name = 'trxkatalog-' + kodeRUP + '.csv',
+        mime = 'text/csv'
+    )
+
+    st.download_button(
+        label = '📥 Download Data Produk E-KATALOG',
+        data = df2_download,
+        file_name = 'prodkatalog-' + kodeRUP + '.csv',
+        mime = 'text/csv'
+    )
+
     ## Data Transaksi Toko Daring
     #st.title("DATA TRANSAKSI TOKO DARING - " + pilih)
 
