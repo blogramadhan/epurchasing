@@ -13,7 +13,7 @@ def ekatalog(pilih):
     def convert_prodkatalog(dfprod):
         return dfprod.to_csv().encode('utf-8')
 
-    # Setting CSS
+     # Setting CSS
     with open('style.css') as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
@@ -131,6 +131,13 @@ def ekatalog(pilih):
             figts = plt.figure(figsize=(10,6))
             sns.barplot(x = opdtrxsum, y = opdtrxsum.index)
             st.pyplot(figts)
+    else:
+        st.error('BELUM ADA TRANSAKSI DI KATALOG LOKAL ...')
+        #with st.expander("BELUM ADA TRANSAKSI DI KATALOG LOKAL ..."):
+        #    st.write("""
+        #        Data transaksi tidak tersedia, ayo donk belanja di Katalog Lokal agar ada data transaksi yang bisa diolah 
+        #        untuk kemudian disajikan.
+        #    """)
  
     # Download Data Button
     df1_download = convert_trxkatalog(df_kat_loc)
