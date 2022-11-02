@@ -87,7 +87,12 @@ def ekatalog(pilih):
         td1.metric("Jumlah Transaksi Toko Daring", jumlah_trx_daring[0])
         td2.metric("Nilai Transaksi Toko Daring", nilai_trx_daring_print)
 
-        opdtrxcount_daring = df_daring_loc['nama_satker'].value_counts()
+        tmp_daring_loc = df_daring_loc[['nama_satker', 'order_id']]
+        pv_daring_loc = tmp_daring_loc.pivot_table(
+            index = ['nama_satker', 'order_id']
+        )
+        tmp_daring_loc_ok = pv_daring_loc.reset_index()
+        opdtrxcount_daring = tmp_daring_loc_ok['nama_satker'].value_counts()
         opdtrxsum_daring = df_daring_loc.groupby(by='nama_satker').sum().sort_values(by='valuasi', ascending=False)['valuasi']  
 
          # Tampilkan Grafik jika ada Data
